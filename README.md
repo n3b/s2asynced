@@ -2,4 +2,4 @@
 
 based on async queues
 
-https://github.com/n3b/queue
+https://github.com/n3b/s2queues
