@@ -30,6 +30,16 @@ class ListenCommand extends ContainerAwareCommand
 	protected $events;
 
 	/**
+	 * @var \SplQueue
+	 */
+	protected $eventQueue;
+
+	/**
+	 * @var \Symfony\Component\EventDispatcher\EventDispatcher
+	 */
+	protected $dispatcher;
+
+	/**
 	 * @see Command
 	 */
 	protected function configure()
@@ -37,7 +47,6 @@ class ListenCommand extends ContainerAwareCommand
 		$this
 			->setName( 'n3bAsyncED:listen' )
 			->setDescription( 'Start listening events' )
-			->addOption( self::OPTION_EVENT_NAME, 0, InputOption::VALUE_OPTIONAL, 'Exact event name.', null )
 			->addOption( self::OPTION_CONTINUOUS, 0, InputOption::VALUE_OPTIONAL, 'Starts the infinite loop.', null )
 			->addOption( self::OPTION_DELAY, 0, InputOption::VALUE_OPTIONAL, 'Event loop delay in ms.', 100000 )
 			->setHelp(<<<EOF
@@ -58,20 +67,12 @@ EOF
 		$this->input = $input;
 		$this->output = $output;
 
-		$this->events = $this->input->getOption( self::OPTION_EVENT_NAME )
-			? array( $this->input->getOption( self::OPTION_EVENT_NAME ) )
-			: array( 'testQueue' ); //todo dep inj
-
-		$this->subscribe();
+		$this->eventQueue = $this->getContainer()->get( 'n3b_async_ed.event_queue' );
+		$this->dispatcher = $this->getContainer()->get( 'event_dispatcher' );
 
 		null === $this->input->getOption( self::OPTION_CONTINUOUS )
 			? $this->iteration()
 			: $this->infinite();
-	}
-
-	protected function subscribe()
-	{
-
 	}
 
 	protected function infinite()
@@ -87,21 +88,11 @@ EOF
 
 	protected function iteration()
 	{
-		$dispatcher = $this->getContainer()->get( 'event_dispatcher' );
-		$builder = $this->getContainer()->get( 'n3b_queues.queue_builder' );
-
-		foreach( $this->events as $eventName )
+		if( $event = $this->eventQueue->dequeue() instanceof Event )
 		{
-			$queue = $builder->get( $eventName );
-
-			if( false !== $event = $queue->dequeue() )
-			{
-				! $event instanceof Event && $event = null;
-
-				$this->output->writeln( sprintf( 'Catch event %s', $eventName) );
-				$dispatcher->dispatch( $eventName, $event );
-				$this->output->writeln( sprintf( 'Processed event %s', $eventName) );
-			}
+			$this->output->writeln( sprintf( 'Catch event %s', $event->getName() ) );
+			$this->dispatcher->dispatch( $event->getName(), $event );
+			$this->output->writeln( sprintf( 'Processed event %s', $event->getName() ) );
 		}
 	}
 }

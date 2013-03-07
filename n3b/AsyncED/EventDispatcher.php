@@ -2,9 +2,10 @@
 
 namespace n3b\AsyncED;
 
-use Symfony\Component\EventDispatcher as Source;
+use Symfony\Component\EventDispatcher\EventDispatcher as BaseDispatcher,
+	Symfony\Component\EventDispatcher\Event;
 
-class EventDispatcher extends Source\EventDispatcher
+class EventDispatcher extends BaseDispatcher
 {
 	private $queue;
 
@@ -13,15 +14,13 @@ class EventDispatcher extends Source\EventDispatcher
 		$this->queue = $queue;
 	}
 
-	public function dispatch($eventName, Source\Event $event = null)
+	public function dispatch( $eventName, Event $event = null )
 	{
-		if (null === $event) {
-			$event = new Event();
-		}
+		null === $event && $event = new Event();
 
-		$event->setName($eventName);
+		$event->setName( $eventName );
 
-		$this->queue && $this->queue->enqueue($event);
+		$this->queue && $this->queue->enqueue( $event );
 
 		return $event;
 	}

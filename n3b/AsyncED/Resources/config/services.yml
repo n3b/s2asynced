@@ -1,0 +1,11 @@
+services:
+  n3b_async_ed.event_queue:
+    class:                               SplQueue
+    factory_service:                     n3b_queues.queue_builder
+    factory_method:                      get
+    arguments:
+      queue_name:                        n3bEventQueue
+  n3b_async_ed.event_dispatcher:
+    class:                               n3b\AsyncED\EventDispatcher
+    arguments:
+      queue:                             @n3b_async_ed.event_queue
