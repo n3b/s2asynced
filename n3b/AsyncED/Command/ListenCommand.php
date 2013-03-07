@@ -71,7 +71,7 @@ EOF
 
 		// standart dispatcher here, dispatch events in current flow
 		$this->dispatcher = $this->getContainer()->get( 'event_dispatcher' );
-
+$this->dispatcher->dispatch('ololo');die();
 		null === $this->input->getOption( self::OPTION_CONTINUOUS )
 			? $this->iteration()
 			: $this->infinite();
