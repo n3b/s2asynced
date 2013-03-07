@@ -68,6 +68,8 @@ EOF
 		$this->output = $output;
 
 		$this->eventQueue = $this->getContainer()->get( 'n3b_async_ed.event_queue' );
+
+		// standart dispatcher here, dispatch events in current flow
 		$this->dispatcher = $this->getContainer()->get( 'event_dispatcher' );
 
 		null === $this->input->getOption( self::OPTION_CONTINUOUS )
@@ -88,11 +90,13 @@ EOF
 
 	protected function iteration()
 	{
-		if( $event = $this->eventQueue->dequeue() instanceof Event )
-		{
-			$this->output->writeln( sprintf( 'Catch event %s', $event->getName() ) );
-			$this->dispatcher->dispatch( $event->getName(), $event );
-			$this->output->writeln( sprintf( 'Processed event %s', $event->getName() ) );
-		}
+		if( ! ( $event = $this->eventQueue->dequeue() ) instanceof Event )
+			return false;
+
+		$eventName = $event->getName();
+
+		$this->output->writeln( sprintf( 'Catch event <info>%s</info>', $eventName ) );
+		$this->dispatcher->dispatch( $eventName, $event );
+		$this->output->writeln( sprintf( 'Processed event <info>%s</info>', $eventName ) );
 	}
 }
