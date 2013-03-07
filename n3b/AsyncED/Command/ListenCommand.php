@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\EventDispatcher\Event;
 
 class ListenCommand extends ContainerAwareCommand
 {
@@ -95,6 +96,8 @@ EOF
 
 			if( false !== $event = $queue->dequeue() )
 			{
+				! $event instanceof Event && $event = null;
+
 				$this->output->writeln( sprintf( 'Catch event %s', $eventName) );
 				$dispatcher->dispatch( $eventName, $event );
 				$this->output->writeln( sprintf( 'Processed event %s', $eventName) );
