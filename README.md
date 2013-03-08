@@ -60,5 +60,6 @@ also, you can run backend handler in infinite loop
 ./app/console n3bAsyncED:listen --continuous=1
 ```
 
-or you can modify it to handle batch of events per run, if you cant use infinite scripts (e.g. on shared hostings)
+or you can modify it to handle batch of events per run, if you cant use infinite scripts (e.g. on shared hostings), and
+just add it to cron
 
