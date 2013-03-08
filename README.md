@@ -9,6 +9,7 @@ n3bQueuesBundle is required
 usage:
 
 add subscribers by tagging your services
+
 services.yml
 ```yml
 services:
