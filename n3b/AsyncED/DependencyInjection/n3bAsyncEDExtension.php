@@ -25,3 +25,4 @@ class n3bAsyncEDExtension extends Extension
 		return 'n3b_async_ed';
 	}
 }
+
