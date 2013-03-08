@@ -53,3 +53,12 @@ note, that tag ```n3b_async_ed.event_subscriber``` adds subscribers to standart 
 
 so, if you want to dispatch event in current flow, just do
 ```$this->getContainer()->get( 'event_dispatcher' )->dispatch( 'ololo' );```
+
+
+also, you can run backend handler in infinite loop
+```bash
+./app/console n3bAsyncED:listen --continuous=1
+```
+
+or you can modify it to handle batch of events per run, if you cant use infinite scripts (e.g. on shared hostings)
+
