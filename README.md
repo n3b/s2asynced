@@ -49,7 +49,7 @@ and then just run backend handler
 ./app/console n3bAsyncED:listen
 ```
 
-note, that ```n3b_async_ed.event_subscriber``` tag add subscribes to standart event dispatcher
+note, that tag ```n3b_async_ed.event_subscriber``` adds subscribers to standart event dispatcher
 
 so, if you want to dispatch event in current flow, just do
 ```$this->getContainer()->get( 'event_dispatcher' )->dispatch( 'ololo' );```
